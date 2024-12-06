@@ -1,13 +1,13 @@
-import { config } from 'dotenv';
-config();
-
-import './App.css'
+import './index.css';
+import Header from './components/Header';
 
 function App() {
-  const openaiApiKey = process.env.OPENAI_API_KEY;
-
-console.log("Your API Key:", openaiApiKey); 
-
+  return (
+    <div>
+      <Header />
+    </div>
+  );
 }
 
-export default App
+export default App;
+
