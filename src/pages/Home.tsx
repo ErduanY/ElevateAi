@@ -1,10 +1,12 @@
 import Header from "../components/Header";
+import HomePage from "../components/HomePage";
 
 const Home = () => {
   return (
     <div>
       <Header/>
-      <p>Navigate to create your personalized workout plan.</p>
+      <></>
+      <HomePage/>
     </div>
   );
 };
