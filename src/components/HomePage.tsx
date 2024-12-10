@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom'
 import { Timer, Dumbbell } from 'lucide-react'
 
 const HomePage = () => {
@@ -23,9 +23,9 @@ const HomePage = () => {
           Whether you&apos;re aiming to build strength or lose weight, our app has you covered.
         </p>
 
-        <button className="px-8 py-4 text-lg font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:opacity-90 transition-opacity">
+        <Link to="/input-form" className="px-8 py-4 text-lg font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:opacity-90 transition-opacity">
           Start Now
-        </button>
+        </Link>
       </div>
     </div>
   )

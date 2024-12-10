@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 const Header = () => {
   return (
-    <header className="bg-gray-900 text-white py-4 px-6">
+    <header className="bg-[#0B0F1A] text-white py-4 px-8">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors">
           <Triangle className="w-8 h-8 fill-current" />
@@ -20,7 +20,7 @@ const Header = () => {
         </nav>
 
         <Link
-          to="/get-started"
+          to="/input-form"
           className="px-6 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium hover:opacity-90 transition-opacity"
         >
           Get started
