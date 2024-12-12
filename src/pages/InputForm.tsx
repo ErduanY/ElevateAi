@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Header from '../components/Header'
 import FormData from '../Interface/Iform'
+import { generateWorkoutPlan } from '../api/openai'
 
 const InputForm = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -15,16 +16,31 @@ const InputForm = () => {
     equipment: ''
   })
 
+  const [workoutPlan, setWorkoutPlan] = useState<string | undefined>(undefined)
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log('Form data:', formData)
+    console.log(import.meta.env.VITE_OPENAI_API_KEY);
+
+
+    const prompt = `Generate a weekly workout plan for a ${formData.gender} aged ${formData.age},
+    who weighs ${formData.weight} and is ${formData.height} tall.
+    Their goal is to ${formData.goals}, and they can work out ${formData.days}.
+    Their activity level is ${formData.activityLevel}, with a body fat percentage of ${formData.bodyFat}.
+    They have access to ${formData.equipment}.`;
+
+    const result = await generateWorkoutPlan(prompt);
+    setWorkoutPlan(result || 'Unable to generate a workout plan at the moment.');
     
-  }
+  };
+
+
 
   return (
     <div className="min-h-screen w-full bg-[#0B0F1A] text-white flex flex-col">
@@ -83,6 +99,14 @@ const InputForm = () => {
               </button>
             </div>
           </form>
+
+          {workoutPlan && (
+            <div className="mt-12 p-6 bg-[#1A1F2E] rounded">
+              <h2 className="text-2xl font-bold mb-4">Your Workout Plan:</h2>
+              <pre className="whitespace-pre-wrap text-gray-300">{workoutPlan}</pre>
+            </div>
+          )}
+
         </div>
       </div>
     </div>
