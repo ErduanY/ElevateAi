@@ -16,7 +16,9 @@ const InputForm = () => {
     equipment: ''
   })
 
-  const [workoutPlan, setWorkoutPlan] = useState<string | undefined>(undefined)
+  const [workoutPlan, setWorkoutPlan] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -25,19 +27,25 @@ const InputForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('Form data:', formData)
-    console.log(import.meta.env.VITE_OPENAI_API_KEY);
+    setError(null);
+    setLoading(true);
 
 
     const prompt = `Generate a weekly workout plan for a ${formData.gender} aged ${formData.age},
     who weighs ${formData.weight} and is ${formData.height} tall.
-    Their goal is to ${formData.goals}, and they can work out ${formData.days}.
+    Their goal is to ${formData.goals}, and they can work out ${formData.days} a week.
     Their activity level is ${formData.activityLevel}, with a body fat percentage of ${formData.bodyFat}.
     They have access to ${formData.equipment}.`;
 
-    const result = await generateWorkoutPlan(prompt);
-    setWorkoutPlan(result || 'Unable to generate a workout plan at the moment.');
-    
+    try {
+      const result = await generateWorkoutPlan(prompt);
+      setWorkoutPlan(result || 'Unable to generate a workout plan at the moment.');
+    } catch (error) {
+      console.error('Error generating workout plan:', error);
+      setError('Failed to generate workout plan. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
 
@@ -93,25 +101,34 @@ const InputForm = () => {
             <div className="flex justify-center mt-12">
               <button 
                 type="submit"
-                className="px-12 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full hover:opacity-90 transition-opacity font-semibold text-xl"
+                disabled={loading}
+                className={`px-12 py-4 ${
+                  loading
+                    ? 'bg-gray-500 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:opacity-90'
+                } text-white rounded-full transition-opacity font-semibold text-xl`}
               >
-                Generate plan
+                 {loading ? 'Generating...' : 'Generate plan'}
               </button>
             </div>
           </form>
 
-          {workoutPlan && (
+          {error && (
+            <div className="mt-6 p-4 bg-red-600 text-white rounded">
+              <p>{error}</p>
+            </div>
+          )}
+
+            {workoutPlan && !loading && (
             <div className="mt-12 p-6 bg-[#1A1F2E] rounded">
               <h2 className="text-2xl font-bold mb-4">Your Workout Plan:</h2>
               <pre className="whitespace-pre-wrap text-gray-300">{workoutPlan}</pre>
             </div>
           )}
-
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default InputForm
-
+export default InputForm;
