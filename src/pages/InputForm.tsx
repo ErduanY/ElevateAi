@@ -16,7 +16,7 @@ const InputForm = () => {
     equipment: ''
   })
 
-  const [workoutPlan, setWorkoutPlan] = useState<string | undefined>(undefined);
+  const [workoutPlan, setWorkoutPlan] = useState<Array<{ day: string; exercises: Array<{ name: string; setsReps: string; link: string }> }> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,25 +29,52 @@ const InputForm = () => {
     e.preventDefault()
     setError(null);
     setLoading(true);
+    setWorkoutPlan(null);
 
 
-    const prompt = `Generate a weekly workout plan for a ${formData.gender} aged ${formData.age},
-    who weighs ${formData.weight} and is ${formData.height} tall.
-    Their goal is to ${formData.goals}, and they can work out ${formData.days} a week.
-    Their activity level is ${formData.activityLevel}, with a body fat percentage of ${formData.bodyFat}.
-    They have access to ${formData.equipment}.`;
+    const prompt = `
+    Generate a personalized weekly workout plan for a user based on the following data:
+    - Gender: ${formData.gender}
+    - Age: ${formData.age}
+    - Weight: ${formData.weight}
+    - Height: ${formData.height}
+    - Fitness goal: ${formData.goals}
+    - Workout days per week: ${formData.days}
+    - Activity level: ${formData.activityLevel}
+    - Body fat percentage: ${formData.bodyFat}
+    - Available equipment: ${formData.equipment}
+    
+    **Output Format**:
+    Return ONLY a valid JSON structure, without any code blocks or additional text, formatted as follows:
+    [
+      {
+        "day": "Day X: Descriptive Title",
+        "exercises": [
+          {
+            "name": "Exercise Name",
+            "setsReps": "Number of sets and reps",
+            "link": "YouTube URL"
+          }
+        ]
+      },
+      ...
+    ]
+    Do NOT include markdown formatting, explanations, or any other text in the response. Only JSON output.
+    `;
+    
+
 
     try {
       const result = await generateWorkoutPlan(prompt);
-      setWorkoutPlan(result || 'Unable to generate a workout plan at the moment.');
-    } catch (error) {
-      console.error('Error generating workout plan:', error);
-      setError('Failed to generate workout plan. Please try again later.');
+      const parsedPlan = JSON.parse(result);
+      setWorkoutPlan(parsedPlan);
+    } catch (err) {
+      console.error('Error generating workout plan:', err);
+      setError('Failed to generate workout plan. Ensure all fields are filled and try again.');
     } finally {
       setLoading(false);
     }
   };
-
 
 
   return (
@@ -119,16 +146,39 @@ const InputForm = () => {
             </div>
           )}
 
-            {workoutPlan && !loading && (
-            <div className="mt-12 p-6 bg-[#1A1F2E] rounded">
-              <h2 className="text-2xl font-bold mb-4">Your Workout Plan:</h2>
-              <pre className="whitespace-pre-wrap text-gray-300">{workoutPlan}</pre>
-            </div>
-          )}
+{workoutPlan && Array.isArray(workoutPlan) && (
+  <div className="mt-12 p-6 bg-[#1A1F2E] rounded">
+    <h2 className="text-2xl font-bold mb-4">Your Workout Plan:</h2>
+    {workoutPlan.map((day, index) => (
+      <div key={index} className="mb-4">
+        <h3 className="text-xl font-semibold mb-2">{day.day}</h3>
+        <ul className="list-disc pl-5 space-y-2">
+          {day.exercises.map((exercise, idx) => (
+            <li key={idx}>
+              <p className="text-gray-300">
+                <span className="font-semibold">{exercise.name}</span> - {exercise.setsReps}
+              </p>
+              {exercise.link && (
+                <a
+                  href={exercise.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 hover:underline"
+                >
+                  Watch Video
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+)}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default InputForm;
+export default InputForm
