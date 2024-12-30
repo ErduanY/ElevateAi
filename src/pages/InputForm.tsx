@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import Header from '../components/Header'
 import FormData from '../Interface/Iform'
 import { generateWorkoutPlan } from '../api/openai'
+import { usePDF } from 'react-to-pdf'
 
 const InputForm = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -20,6 +21,8 @@ const InputForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { toPDF, targetRef } = usePDF({filename: 'workout-plan.pdf'});
+
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -30,7 +33,6 @@ const InputForm = () => {
     setError(null);
     setLoading(true);
     setWorkoutPlan(null);
-
 
     const prompt = `
     Generate a personalized weekly workout plan for a user based on the following data:
@@ -61,21 +63,18 @@ const InputForm = () => {
     ]
     Do NOT include markdown formatting, explanations, or any other text in the response. Only JSON output.
     `;
-    
-
 
     try {
       const result = await generateWorkoutPlan(prompt);
       const parsedPlan = JSON.parse(result);
       setWorkoutPlan(parsedPlan);
-    } catch (err) {
-      console.error('Error generating workout plan:', err);
+    } catch (error) {
+      console.error('Error generating workout plan:', error);
       setError('Failed to generate workout plan. Ensure all fields are filled and try again.');
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="min-h-screen w-full bg-[#0B0F1A] text-white flex flex-col">
@@ -146,35 +145,43 @@ const InputForm = () => {
             </div>
           )}
 
-{workoutPlan && Array.isArray(workoutPlan) && (
-  <div className="mt-12 p-6 bg-[#1A1F2E] rounded">
-    <h2 className="text-2xl font-bold mb-4">Your Workout Plan:</h2>
-    {workoutPlan.map((day, index) => (
-      <div key={index} className="mb-4">
-        <h3 className="text-xl font-semibold mb-2">{day.day}</h3>
-        <ul className="list-disc pl-5 space-y-2">
-          {day.exercises.map((exercise, idx) => (
-            <li key={idx}>
-              <p className="text-gray-300">
-                <span className="font-semibold">{exercise.name}</span> - {exercise.setsReps}
-              </p>
-              {exercise.link && (
-                <a
-                  href={exercise.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-cyan-400 hover:underline"
+          {workoutPlan && Array.isArray(workoutPlan) && (
+            <div ref={targetRef} className="mt-12 p-6 bg-[#1A1F2E] rounded">
+              <h2 className="text-2xl font-bold mb-4">Your Workout Plan:</h2>
+              {workoutPlan.map((day, index) => (
+                <div key={index} className="mb-4">
+                  <h3 className="text-xl font-semibold mb-2">{day.day}</h3>
+                  <ul className="list-disc pl-5 space-y-2">
+                    {day.exercises.map((exercise, idx) => (
+                      <li key={idx}>
+                        <p className="text-gray-300">
+                          <span className="font-semibold">{exercise.name}</span> - {exercise.setsReps}
+                        </p>
+                        {exercise.link && (
+                          <a
+                            href={exercise.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-cyan-400 hover:underline"
+                          >
+                            Watch Video
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <div className="mt-6 flex justify-center">
+                <button
+                  onClick={() => toPDF()}
+                  className="px-8 py-3 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors font-semibold"
                 >
-                  Watch Video
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
-  </div>
-)}
+                  Download PDF
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -182,3 +189,4 @@ const InputForm = () => {
 }
 
 export default InputForm
+
