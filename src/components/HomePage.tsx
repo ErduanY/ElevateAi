@@ -20,7 +20,7 @@ const HomePage = () => {
         
         <p className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto mb-12">
           Unlock your potential and take charge of your fitness journey with our cutting-edge fitness program generator. 
-          Whether you&apos;re aiming to build strength or lose weight, our app has you covered.
+          Whether you're aiming to build strength or lose weight, our app has you covered.
         </p>
 
         <Link to="/input-form" className="px-8 py-4 text-lg font-semibold rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:opacity-90 transition-opacity">

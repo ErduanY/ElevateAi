@@ -1,4 +1,3 @@
-
 interface FormData {
   gender: string
   age: string

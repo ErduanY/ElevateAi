@@ -3,6 +3,7 @@ import Header from '../components/Header'
 import FormData from '../Interface/Iform'
 import { generateWorkoutPlan } from '../api/openai'
 import { usePDF } from 'react-to-pdf'
+import FitnessTips from '../components/FitnessTips'
 
 const InputForm = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -92,7 +93,7 @@ const InputForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
               {[
                 { name: 'gender', label: 'Gender', options: ['Male', 'Female', 'Other'] },
-                { name: 'age', label: 'Age', options: Array.from({ length: 83 }, (_, i) => `${i + 18} years`) },
+                { name: 'age', label: 'Age', options: Array.from({ length: 83 }, (_, i) => `${i + 13} years`) },
                 { name: 'height', label: 'Height', options: Array.from({ length: 61 }, (_, i) => `${i + 140} cm`) },
                 { name: 'weight', label: 'Weight', options: Array.from({ length: 151 }, (_, i) => `${i + 40} kg`) },
                 { name: 'goals', label: 'Goals', options: ['Build Muscle', 'Lose Weight', 'Maintain', 'Improve Strength', 'Improve Endurance'] },
@@ -183,6 +184,7 @@ const InputForm = () => {
             </div>
           )}
         </div>
+        <FitnessTips />
       </div>
     </div>
   )
