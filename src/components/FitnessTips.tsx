@@ -49,7 +49,7 @@ const tips: Tip[] = [
   }
 ]
 
-const FitnessTips: React.FC = () => {
+const FitnessTips = () => {
   return (
     <div className="bg-[#1A1F2E] rounded-lg p-6 mt-8">
       <h2 className="text-2xl font-bold mb-6 text-center text-white">General Fitness Tips</h2>
