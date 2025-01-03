@@ -1,11 +1,12 @@
-import React, { useState, useRef } from 'react'
-import Header from '../components/Header'
-import FormData from '../Interface/Iform'
-import { generateWorkoutPlan } from '../api/openai'
-import { usePDF } from 'react-to-pdf'
-import FitnessTips from '../components/FitnessTips'
+import React, { useState } from 'react';
+import Header from '../components/Header';
+import FormData from '../Interface/Iform';
+import { generateWorkoutPlan } from '../api/openai';
+import { usePDF } from 'react-to-pdf';
+import FitnessTips from '../components/FitnessTips';
 
 const InputForm = () => {
+  // State för att hantera formdata, träningsschema och felmeddelanden
   const [formData, setFormData] = useState<FormData>({
     gender: '',
     age: '',
@@ -15,26 +16,33 @@ const InputForm = () => {
     days: '',
     activityLevel: '',
     bodyFat: '',
-    equipment: ''
-  })
+    equipment: '',
+  });
 
-  const [workoutPlan, setWorkoutPlan] = useState<Array<{ day: string; exercises: Array<{ name: string; setsReps: string; link: string }> }> | null>(null);
+  const [workoutPlan, setWorkoutPlan] = useState<
+    Array<{ day: string; exercises: Array<{ name: string; setsReps: string; link: string }> }> | null
+  >(null);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { toPDF, targetRef } = usePDF({filename: 'workout-plan.pdf'});
+  // Hook för att skapa PDF av träningsplanen
+  const { toPDF, targetRef } = usePDF({ filename: 'workout-plan.pdf' });
 
+  // Hantera ändringar i formulärfältet
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
+  // Hantera formulärets data och generera träningsplan
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setError(null);
-    setLoading(true);
-    setWorkoutPlan(null);
+    e.preventDefault();
+    setError(null); // Nollställ eventuella tidigare fel
+    setLoading(true); // Aktivera laddningsstatus
+    setWorkoutPlan(null); // Nollställ tidigare träningsplan
 
+    // Skapa prompt som skickas till OpenAI
     const prompt = `
     Generate a personalized weekly workout plan for a user based on the following data:
     - Gender: ${formData.gender}
@@ -46,7 +54,7 @@ const InputForm = () => {
     - Activity level: ${formData.activityLevel}
     - Body fat percentage: ${formData.bodyFat}
     - Available equipment: ${formData.equipment}
-    
+
     **Output Format**:
     Return ONLY a valid JSON structure, without any code blocks or additional text, formatted as follows:
     [
@@ -66,14 +74,15 @@ const InputForm = () => {
     `;
 
     try {
+      // Anropa API för att generera träningsplan
       const result = await generateWorkoutPlan(prompt);
-      const parsedPlan = JSON.parse(result);
-      setWorkoutPlan(parsedPlan);
+      const parsedPlan = JSON.parse(result); // Parsar resultatet som JSON
+      setWorkoutPlan(parsedPlan); // Uppdatera state med träningsplanen
     } catch (error) {
       console.error('Error generating workout plan:', error);
       setError('Failed to generate workout plan. Ensure all fields are filled and try again.');
     } finally {
-      setLoading(false);
+      setLoading(false); // Avsluta laddningsstatus
     }
   };
 
@@ -89,8 +98,10 @@ const InputForm = () => {
         </div>
 
         <div className="max-w-6xl mx-auto">
+          {/* Formulär för att samla in data */}
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              {/* Skapa formulärfält baserat på data */}
               {[
                 { name: 'gender', label: 'Gender', options: ['Male', 'Female', 'Other'] },
                 { name: 'age', label: 'Age', options: Array.from({ length: 83 }, (_, i) => `${i + 13} years`) },
@@ -110,14 +121,18 @@ const InputForm = () => {
                     className="block appearance-none w-full bg-[#1A1F2E] border border-gray-800 text-white py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-[#252B3B] focus:border-gray-700"
                   >
                     <option value="">{label}</option>
-                    {options.map(option => (
+                    {options.map((option) => (
                       <option key={option} value={option.toLowerCase()}>
                         {option}
                       </option>
                     ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <svg
+                      className="fill-current h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
                       <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                     </svg>
                   </div>
@@ -125,8 +140,9 @@ const InputForm = () => {
               ))}
             </div>
 
+            {/* Knapp för att generera träningsplan */}
             <div className="flex justify-center mt-12">
-              <button 
+              <button
                 type="submit"
                 disabled={loading}
                 className={`px-12 py-4 ${
@@ -135,17 +151,19 @@ const InputForm = () => {
                     : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:opacity-90'
                 } text-white rounded-full transition-opacity font-semibold text-xl`}
               >
-                 {loading ? 'Generating...' : 'Generate plan'}
+                {loading ? 'Generating...' : 'Generate plan'}
               </button>
             </div>
           </form>
 
+          {/* Felmeddelande */}
           {error && (
             <div className="mt-6 p-4 bg-red-600 text-white rounded">
               <p>{error}</p>
             </div>
           )}
 
+          {/* Visa träningsplan och möjlighet att ladda ner som PDF */}
           {workoutPlan && Array.isArray(workoutPlan) && (
             <div ref={targetRef} className="mt-12 p-6 bg-[#1A1F2E] rounded">
               <h2 className="text-2xl font-bold mb-4">Your Workout Plan:</h2>
@@ -184,11 +202,11 @@ const InputForm = () => {
             </div>
           )}
         </div>
+        {/* Tipssektion */}
         <FitnessTips />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default InputForm
-
+export default InputForm;
