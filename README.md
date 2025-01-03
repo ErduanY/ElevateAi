@@ -1,27 +1,48 @@
-# React + TypeScript + Vite
+# **ElevateAI** 🏋️‍♂️  
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**ElevateAI** is a web application that generates personalized workout plans tailored to your fitness goals, preferences, and equipment availability. With built-in error handling, responsive design, and options to save plans, this tool ensures an exceptional user experience for fitness enthusiasts.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## **Features** 🚀  
+- **AI-Powered Plans:** Generates dynamic workout plans using OpenAI's API.  
+- **Customizable Inputs:** Tailor your plan by specifying fitness goals, activity levels, and more.  
+- **Save and Export:** Save your workout plans as a PDF.  
+- **YouTube Integration:** Clickable video tutorials for each exercise.  
+- **Responsive Design:** Fully optimized for mobile and desktop.  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## **Tech Stack** 🛠️  
+- **Frontend:** React, TypeScript, Tailwind CSS.  
+- **API:** OpenAI API (GPT-3.5 Turbo) for generating workout plans.  
+- **PDF Generation:** `react-to-pdf` for exporting workout plans.  
+- **State Management:** React Hooks (`useState`, `useEffect`).  
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+## **Usage** 💡  
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+1. Fill out the form with your details (e.g., gender, age, goals, etc.).  
+2. Click **"Generate plan"** to create a customized workout plan.  
+3. Save the plan to LocalStorage or download it as a PDF.  
+4. Follow the provided YouTube links for exercise tutorials.  
+
+---
+
+## **Screenshots** 📸  
+
+### **1. Input Form**
+(![image](https://github.com/user-attachments/assets/70f6bf87-eb84-42ec-ab97-7b386d995198)
+
+
+### **2. Generated Workout Plan**
+(![image](https://github.com/user-attachments/assets/3fa19ae0-cd08-4797-b02d-185a98204bcf)
+
+
+---
+
+## **Acknowledgments** 🙌  
+- OpenAI for their powerful API.  
+- Developers worldwide who share their expertise.  
+- Fitness enthusiasts for inspiration.  
